@@ -130,7 +130,7 @@ void keyboard() {
 		tx -= 0.001;
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+	/*if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		ty2 += 0.001;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
@@ -141,7 +141,7 @@ void keyboard() {
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 		tx2 -= 0.001;
-	}
+	}*/
 	
 
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
@@ -657,6 +657,42 @@ int main() {
 
 			time = UPDATE_INTERVAL; // reset the timer
 		}
+
+		////////////////////
+		/*
+		CODE TO RECEIVE UPDATES FROM SERVER GOES HERE...
+		*/
+		/*char buf[BUFLEN];
+		struct sockaddr_in fromAddr;
+		int fromlen;
+		fromlen = sizeof(fromAddr);
+
+		memset(buf, 0, BUFLEN);
+
+		int bytes_received = -1;
+		int sError = -1;
+
+		//Receiving data from the server
+		bytes_received = recvfrom(client_socket, buf, sizeof(buf), 0, ptr->ai_addr, &fromlen);
+
+		sError = WSAGetLastError();
+
+		if (sError != WSAEWOULDBLOCK && bytes_received > 0)
+		{
+			std::cout << "Received: " << buf << std::endl;
+
+			std::string tmp = buf;
+			std::size_t pos = tmp.find("@"); //creates a position to separate data
+			tmp = tmp.substr(0, pos - 1); //Pos - 1 is tx
+			tx2 = std::stof(tmp, NULL); //Convert to float
+			tmp = buf; //Reset the temp variable 
+			tmp = tmp.substr(pos + 1); //pos + 1 is ty
+			ty2 = std::stof(tmp, NULL);
+			//Can be done for other axes?
+
+			std::cout << "tx2: " << tx2 << std::endl;
+			std::cout << "ty2: " << ty2 << std::endl;
+		}*/
 
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

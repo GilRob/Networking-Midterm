@@ -117,7 +117,7 @@ float ty2 = 0.0f;
 GLuint filter_mode = GL_LINEAR;
 
 void keyboard() {
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+	/*if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 		ty += 0.001;
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
@@ -128,7 +128,7 @@ void keyboard() {
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 		tx -= 0.001;
-	}
+	}*/
 	
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		ty2 += 0.001;
@@ -643,7 +643,7 @@ int main() {
 	///// Game loop /////
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
-		
+
 		////////////////////
 		/*
 		CODE TO RECEIVE UPDATES FROM CLIENT GOES HERE...
@@ -680,6 +680,35 @@ int main() {
 			std::cout << "ty: " << ty << std::endl;
 		}
 		////////////////////
+
+				/////// Timer for network updates
+		float now = glfwGetTime();
+		float delta = now - previous;
+		previous = now;
+
+		// When timer goes off, send an update
+		time -= delta;
+		if (time <= 0.f)
+		{
+			// Code to send position updates go HERE...
+			char message[BUFLEN];
+
+			//Combine data to a string to send to the server
+			std::string msg = std::to_string(tx2) + "@" + std::to_string(ty2);
+
+			strcpy(message, (char*)msg.c_str()); //Copies msg into message
+
+			//Send the data to the server
+			if (sendto(server_socket, message, BUFLEN, 0, ptr->ai_addr, ptr->ai_addrlen) == SOCKET_ERROR)
+			{
+				std::cout << "Sendto() failed..." << std::endl;
+			}
+
+			std::cout << "Sent: " << message << std::endl;
+			memset(message, '\0', BUFLEN);
+
+			time = UPDATE_INTERVAL; // reset the timer
+		}
 
 
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
