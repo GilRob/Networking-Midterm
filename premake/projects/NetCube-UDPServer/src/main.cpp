@@ -132,19 +132,15 @@ void keyboard() {
 	
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		ty2 += 0.001;
-		std::cout << ty2;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
 		ty2 -= 0.001;
-		std::cout << ty2;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		tx2 += 0.001;
-		std::cout << tx2;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 		tx2 -= 0.001;
-		std::cout << tx2;
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
@@ -707,12 +703,11 @@ int main() {
 
 		glUniformMatrix4fv(MatrixID, 1, 
 			GL_FALSE, &mvp[0][0]);
+
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 		glUniformMatrix4fv(MatrixID2, 1,
 			GL_FALSE, &mvp2[0][0]);
-
-		//glUniformMatrix4fv()
-
-
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
