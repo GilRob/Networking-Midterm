@@ -24,6 +24,8 @@ GLFWwindow* window;
 unsigned char* image;
 int width, height;
 
+std::string ipAddress;
+
 void loadImage() {
 	int channels;
 	stbi_set_flip_vertically_on_load(true);
@@ -116,6 +118,9 @@ float tx2 = 0.0f;
 float ty2 = 0.0f;
 GLuint filter_mode = GL_LINEAR;
 
+float UPDATE_INTERVAL = 5.0f; //seconds
+
+
 void keyboard() {
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 		ty += 0.001;
@@ -128,6 +133,19 @@ void keyboard() {
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 		tx -= 0.001;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+		UPDATE_INTERVAL += 0.1f;
+		std::cout << UPDATE_INTERVAL << std::endl;
+	}
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+		UPDATE_INTERVAL -= 0.1f;
+		std::cout << UPDATE_INTERVAL << std::endl;
+		if (UPDATE_INTERVAL <= 0.0f)
+		{
+			UPDATE_INTERVAL = 0.1f;
+		}
 	}
 
 	/*if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
@@ -168,7 +186,6 @@ struct addrinfo* ptr = NULL;
 #define SERVER "127.0.0.1"
 #define PORT "8888"
 #define BUFLEN 512
-#define UPDATE_INTERVAL 0.100 //seconds
 
 bool initNetwork() {
 	//Initialize winsock
@@ -191,7 +208,11 @@ bool initNetwork() {
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_protocol = IPPROTO_UDP;
 
-	if (getaddrinfo(SERVER, PORT, &hints, &ptr) != 0) {
+	std::cout << "Enter the host IP address> ";
+	std::getline(std::cin, ipAddress);
+	const char* theAddy = ipAddress.c_str();
+
+	if (getaddrinfo(theAddy, PORT, &hints, &ptr) != 0) {
 		printf("Getaddrinfo failed!! %d\n", WSAGetLastError());
 		WSACleanup();
 		return 0;
@@ -205,6 +226,10 @@ bool initNetwork() {
 		WSACleanup();
 		return 0;
 	}
+
+	/// Change to non-blocking mode
+	u_long mode = 1;// 0 for blocking mode
+	ioctlsocket(client_socket, FIONBIO, &mode);
 
 	return 1;
 }
@@ -662,7 +687,7 @@ int main() {
 		/*
 		CODE TO RECEIVE UPDATES FROM SERVER GOES HERE...
 		*/
-		/*char buf[BUFLEN];
+		char buf[BUFLEN];
 		struct sockaddr_in fromAddr;
 		int fromlen;
 		fromlen = sizeof(fromAddr);
@@ -690,9 +715,9 @@ int main() {
 			ty2 = std::stof(tmp, NULL);
 			//Can be done for other axes?
 
-			std::cout << "tx2: " << tx2 << std::endl;
-			std::cout << "ty2: " << ty2 << std::endl;
-		}*/
+			//std::cout << "tx2: " << tx2 << std::endl;
+			//std::cout << "ty2: " << ty2 << std::endl;
+		}
 
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

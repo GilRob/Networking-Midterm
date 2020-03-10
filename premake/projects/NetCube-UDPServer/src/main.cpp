@@ -116,6 +116,8 @@ float tx2 = 0.0f;
 float ty2 = 0.0f;
 GLuint filter_mode = GL_LINEAR;
 
+float UPDATE_INTERVAL = 5.0f; //seconds
+
 void keyboard() {
 	/*if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 		ty += 0.001;
@@ -143,6 +145,19 @@ void keyboard() {
 		tx2 -= 0.001;
 	}
 
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+		UPDATE_INTERVAL += 0.1f;
+		std::cout << UPDATE_INTERVAL << std::endl;
+	}
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+		UPDATE_INTERVAL -= 0.1f;
+		std::cout << UPDATE_INTERVAL << std::endl;
+		if (UPDATE_INTERVAL <= 0.0f)
+		{
+			UPDATE_INTERVAL = 0.1f;
+		}
+	}
+
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
 		if (filter_mode == GL_LINEAR) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -166,7 +181,7 @@ SOCKET server_socket;
 struct addrinfo* ptr = NULL;
 #define PORT "8888"
 #define BUFLEN 512
-#define UPDATE_INTERVAL 0.100 //seconds
+
 
 bool initNetwork() {
 	//Initialize winsock
@@ -676,12 +691,14 @@ int main() {
 			ty = std::stof(tmp, NULL);
 			//Can be done for other axes?
 
-			std::cout << "tx: " << tx << std::endl;
-			std::cout << "ty: " << ty << std::endl;
+			//std::cout << "tx: " << tx << std::endl;
+			//std::cout << "ty: " << ty << std::endl;
 		}
 		////////////////////
+		
+		///SENDING DATA TO CLIENT///
 
-				/////// Timer for network updates
+		/////// Timer for network updates
 		float now = glfwGetTime();
 		float delta = now - previous;
 		previous = now;
@@ -699,7 +716,7 @@ int main() {
 			strcpy(message, (char*)msg.c_str()); //Copies msg into message
 
 			//Send the data to the server
-			if (sendto(server_socket, message, BUFLEN, 0, ptr->ai_addr, ptr->ai_addrlen) == SOCKET_ERROR)
+			if (sendto(server_socket, message, BUFLEN, 0, (struct sockaddr*) & fromAddr, ptr->ai_addrlen) == SOCKET_ERROR)
 			{
 				std::cout << "Sendto() failed..." << std::endl;
 			}
